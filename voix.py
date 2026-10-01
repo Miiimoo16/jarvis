@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import sys
 import time
@@ -9,6 +10,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 FICHIER = "reponse.wav"
+
+
+def nettoyer(texte):
+    """Garde uniquement lettres latines, chiffres, accents et ponctuation simple."""
+    texte = re.sub(r"[^A-Za-z0-9\sÀ-ÿŒœ.,;:!?'’\-]", " ", texte)
+    return re.sub(r"\s+", " ", texte).strip()
 
 
 def ajouter_silence(fichier, secondes=0.6):
@@ -23,6 +30,9 @@ def ajouter_silence(fichier, secondes=0.6):
 
 
 def parler(texte):
+    texte = nettoyer(texte)
+    if not texte:
+        return
     modele = os.getenv("VOICE_MODEL", "fr_FR-siwis-medium")
     env = {**os.environ, "PYTHONUTF8": "1"}
     subprocess.run(
