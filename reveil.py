@@ -5,6 +5,7 @@ import difflib
 from dotenv import load_dotenv
 from faster_whisper import WhisperModel
 from oreilles import enregistrer
+from commandes import MOTS_QUITTER, contient
 
 load_dotenv()
 
@@ -34,8 +35,8 @@ def contient_le_mot(texte):
                 return True
     return False
 
-
 def attendre():
+    """Renvoie 'eveil' si le mot d'éveil est entendu, 'quitter' si on dit exit."""
     print("En veille... dis ton mot d'éveil.")
     while True:
         audio = enregistrer()
@@ -46,5 +47,7 @@ def attendre():
         )
         texte = " ".join(s.text for s in segments).strip()
         print("(entendu :", texte, ")")
+        if texte and contient(texte, MOTS_QUITTER):
+            return "quitter"
         if texte and contient_le_mot(texte):
-            return
+            return "eveil"

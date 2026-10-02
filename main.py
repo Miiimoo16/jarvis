@@ -1,17 +1,8 @@
-import re
 from cerveau import Cerveau
 from voix import parler
 from oreilles import ecouter
+from commandes import MOTS_QUITTER, MOTS_VEILLE, contient
 import reveil
-
-MOTS_QUITTER = ("exit", "quitter", "quitte")
-MOTS_VEILLE = ("au revoir", "à plus tard")
-
-
-def contient(texte, mots):
-    propre = " " + re.sub(r"[^\w\s]", " ", texte.lower()) + " "
-    propre = re.sub(r"\s+", " ", propre)
-    return any(f" {mot} " in propre for mot in mots)
 
 
 def conversation(cerveau):
@@ -41,7 +32,9 @@ cerveau = Cerveau()
 parler("Systèmes en ligne.")
 
 while True:
-    reveil.attendre()
+    if reveil.attendre() == "quitter":
+        parler("À bientôt.")
+        break
     parler("Oui ?")
     if conversation(cerveau) == "quitter":
         break
