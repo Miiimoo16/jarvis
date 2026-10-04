@@ -18,3 +18,14 @@ def extraire_ouverture(texte):
         re.IGNORECASE,
     )
     return m.group(1).strip() if m else None
+
+def extraire_meteo(texte):
+    """Renvoie la ville demandée ('' si aucune), ou None si ce n'est pas une demande météo."""
+    t = texte.lower()
+    if "météo" not in t and "meteo" not in t and not re.search(r"quelle? temps", t):
+        return None
+    m = re.search(
+        r"(?:météo|meteo|temps(?: fait-il)?)\s+(?:à|a|de|du|pour|au|en)\s+(?:la |le |l')?([^.!?]+)",
+        t,
+    )
+    return m.group(1).strip() if m else ""

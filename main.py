@@ -1,8 +1,10 @@
 from cerveau import Cerveau
 from voix import parler
 from oreilles import ecouter
-from commandes import MOTS_QUITTER, MOTS_VEILLE, contient, extraire_ouverture
-from outils import ouvrir_site
+from commandes import (
+    MOTS_QUITTER, MOTS_VEILLE, contient, extraire_ouverture, extraire_meteo,
+)
+from outils import ouvrir_site, meteo
 import reveil
 
 
@@ -25,9 +27,13 @@ def conversation(cerveau):
             parler("Je repasse en veille.")
             return "veille"
         site = extraire_ouverture(texte)
+        ville = extraire_meteo(texte)
         if site:
             reponse = ouvrir_site(site)
             print("[direct] ouvrir_site", site, "->", reponse)
+        elif ville is not None:
+            reponse = meteo(ville)
+            print("[direct] meteo", repr(ville), "->", reponse)
         else:
             reponse = cerveau.repondre(texte)
             print("Jarvis :", reponse)
