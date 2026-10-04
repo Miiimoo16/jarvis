@@ -10,7 +10,8 @@ PAROLE_MAX = 20     # durée maximale d'une phrase
 SEUIL = 0.006       # plus sensible : les mots dits doucement sont captés
 FIN_SILENCE = 1.8   # il attend plus longtemps avant de te couper
 AVANT = 0.5         # demi-seconde conservée avant le début de ta voix
-modele = WhisperModel("base", device="cpu", compute_type="int8")
+modele = WhisperModel("small", device="cpu", compute_type="int8")
+PROMPT = "Conversation en français avec Jarvis, un assistant vocal. Ouvre YouTube. Quelle heure est-il ? Ouvre Google."
 
 
 def enregistrer():
@@ -50,7 +51,9 @@ def ecouter():
     audio = enregistrer()
     if audio is None:
         return ""
-    segments, _ = modele.transcribe(audio, language="fr", beam_size=1)
+    segments, _ = modele.transcribe(
+        audio, language="fr", beam_size=5, vad_filter=True, initial_prompt=PROMPT
+    )
     return " ".join(s.text for s in segments).strip()
 
 

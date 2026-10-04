@@ -1,7 +1,8 @@
 from cerveau import Cerveau
 from voix import parler
 from oreilles import ecouter
-from commandes import MOTS_QUITTER, MOTS_VEILLE, contient
+from commandes import MOTS_QUITTER, MOTS_VEILLE, contient, extraire_ouverture
+from outils import ouvrir_site
 import reveil
 
 
@@ -23,8 +24,13 @@ def conversation(cerveau):
         if contient(texte, MOTS_VEILLE):
             parler("Je repasse en veille.")
             return "veille"
-        reponse = cerveau.repondre(texte)
-        print("Jarvis :", reponse)
+        site = extraire_ouverture(texte)
+        if site:
+            reponse = ouvrir_site(site)
+            print("[direct] ouvrir_site", site, "->", reponse)
+        else:
+            reponse = cerveau.repondre(texte)
+            print("Jarvis :", reponse)
         parler(reponse)
 
 
